@@ -14,6 +14,7 @@ class App extends React.Component {
   };
 
   //Создание элементов
+
   createItem(label, min, sec) {
     return {
       id: this.state.todoData.length + 1,
@@ -124,6 +125,7 @@ class App extends React.Component {
 
   countdownTime = (id, min, sec) => {
     let startTime = Math.floor(min * 60 + sec);
+
     if (startTime <= 0) return;
     //уменьшаем общее время на одну секунду
     startTime--;
