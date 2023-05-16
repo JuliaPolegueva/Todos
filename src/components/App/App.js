@@ -1,15 +1,15 @@
-import React from "react";
+import React from 'react';
 
-import NewTaskForm from "../NewTaskForm";
-import TaskList from "../TaskList";
-import Footer from "../Footer";
+import NewTaskForm from '../NewTaskForm';
+import TaskList from '../TaskList';
+import Footer from '../Footer';
 
-import "./App.css";
+import './App.css';
 
 class App extends React.Component {
   state = {
     todoData: [],
-    filter: "All",
+    filter: 'All',
     timer: false,
   };
 
@@ -93,11 +93,7 @@ class App extends React.Component {
     const { todoData, filter } = this.state;
 
     return todoData.filter(({ checked }) => {
-      return filter === "All"
-        ? true
-        : filter === "Completed"
-        ? checked === true
-        : checked === false;
+      return filter === 'All' ? true : filter === 'Completed' ? checked === true : checked === false;
     });
   };
 

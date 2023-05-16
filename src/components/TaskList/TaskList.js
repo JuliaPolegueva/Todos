@@ -1,8 +1,9 @@
-import React from "react";
-import Task from "../Task";
-import PropTypes from "prop-types";
+import React from 'react';
+import PropTypes from 'prop-types';
 
-import "./TaskList.css";
+import Task from '../Task';
+
+import './TaskList.css';
 
 class TaskList extends React.Component {
   render() {
@@ -36,6 +37,7 @@ TaskList.defaultProps = {
 };
 
 TaskList.propTypes = {
+  timer: PropTypes.bool,
   todos: PropTypes.any,
   checkItem: PropTypes.func.isRequired,
   deleteItem: PropTypes.func.isRequired,

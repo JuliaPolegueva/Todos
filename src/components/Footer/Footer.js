@@ -1,8 +1,9 @@
-import React from "react";
-import PropTypes from "prop-types";
-import TasksFilter from "../TasksFilter";
+import React from 'react';
+import PropTypes from 'prop-types';
 
-import "./Footer.css";
+import TasksFilter from '../TasksFilter';
+
+import './Footer.css';
 
 class Footer extends React.Component {
   render() {
@@ -23,7 +24,7 @@ class Footer extends React.Component {
 
 Footer.defaultProps = {
   lefts: 0,
-  filter: "All",
+  filter: 'All',
 };
 
 Footer.propTypes = {

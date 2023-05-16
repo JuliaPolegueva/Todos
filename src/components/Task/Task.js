@@ -1,12 +1,12 @@
-import React from "react";
-import { formatDistanceToNow } from "date-fns";
-import PropTypes from "prop-types";
+import React from 'react';
+import { formatDistanceToNow } from 'date-fns';
+import PropTypes from 'prop-types';
 
-import "./Task.css";
+import './Task.css';
 
 class Task extends React.Component {
   state = {
-    label: "",
+    label: '',
     editing: false,
   };
 
@@ -18,7 +18,7 @@ class Task extends React.Component {
     this.props.editItem(this.props.todo.id, this.state.label);
 
     this.setState({
-      label: "",
+      label: '',
       editing: false,
     });
   };
@@ -30,7 +30,7 @@ class Task extends React.Component {
 
     return (
       //Классы li в зависимости от состояния
-      <li className={checked ? "completed" : this.state.editing ? "editing" : null}>
+      <li className={checked ? 'completed' : this.state.editing ? 'editing' : null}>
         <div className="view">
           <input
             className="toggle"
@@ -42,10 +42,7 @@ class Task extends React.Component {
           <label>
             <span className="title">{body}</span>
             <span className="description">
-              <button
-                className="icon icon-play"
-                onClick={timer ? () => {} : countdownTime}
-              ></button>
+              <button className="icon icon-play" onClick={timer ? () => {} : countdownTime}></button>
               <button className="icon icon-pause" onClick={stopTime}></button>
               {min}:{sec}
             </span>
@@ -59,9 +56,7 @@ class Task extends React.Component {
           <button
             className="icon icon-edit"
             //Функция редактирования задачи
-            onClick={() =>
-              this.setState(({ editing }) => ({ editing: !editing, label: this.props.todo.body }))
-            }
+            onClick={() => this.setState(({ editing }) => ({ editing: !editing, label: this.props.todo.body }))}
           ></button>
           <button className="icon icon-destroy" onClick={deleteItem}></button>
         </div>
@@ -96,6 +91,7 @@ Task.propTypes = {
   editItem: PropTypes.func.isRequired,
   countdownTime: PropTypes.func.isRequired,
   stopTime: PropTypes.func.isRequired,
+  timer: PropTypes.bool,
 };
 
 export default Task;

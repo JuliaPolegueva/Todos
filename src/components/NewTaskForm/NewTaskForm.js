@@ -1,13 +1,13 @@
-import React from "react";
-import PropTypes from "prop-types";
+import React from 'react';
+import PropTypes from 'prop-types';
 
-import "./NewTaskForm.css";
+import './NewTaskForm.css';
 
 class NewTaskForm extends React.Component {
   state = {
-    label: "",
-    min: "",
-    sec: "",
+    label: '',
+    min: '',
+    sec: '',
   };
 
   //Изменяет состояние label при вводе текста в input
@@ -30,9 +30,9 @@ class NewTaskForm extends React.Component {
     if (this.state.label.trim()) this.props.addItem(label, Number(min), Number(sec));
 
     this.setState({
-      label: "",
-      min: "",
-      sec: "",
+      label: '',
+      min: '',
+      sec: '',
     });
   };
 
