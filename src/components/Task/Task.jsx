@@ -26,24 +26,18 @@ class Task extends React.Component {
   render() {
     //Данные с TaskList деструктуризация
     const { todo, timer, deleteItem, checkItem, countdownTime, stopTime } = this.props;
-    const { body, min, sec, checked, date } = todo;
+    const { id, body, min, sec, checked, date } = todo;
 
     return (
       //Классы li в зависимости от состояния
       <li className={checked ? 'completed' : this.state.editing ? 'editing' : null}>
         <div className="view">
-          <input
-            className="toggle"
-            type="checkbox"
-            //Функция выполнения задачи
-            onChange={checkItem}
-            checked={checked}
-          />
-          <label>
+          <input className="toggle" type="checkbox" id={id} onChange={checkItem} checked={checked} />
+          <label htmlFor={id}>
             <span className="title">{body}</span>
             <span className="description">
-              <button className="icon icon-play" onClick={timer ? () => {} : countdownTime}></button>
-              <button className="icon icon-pause" onClick={stopTime}></button>
+              <button className="icon icon-play" type="button" onClick={timer ? () => {} : countdownTime}></button>
+              <button className="icon icon-pause" type="button" onClick={stopTime}></button>
               {min}:{sec}
             </span>
             <span className="description">
@@ -55,13 +49,15 @@ class Task extends React.Component {
           </label>
           <button
             className="icon icon-edit"
-            //Функция редактирования задачи
+            type="button"
             onClick={() => this.setState(({ editing }) => ({ editing: !editing, label: this.props.todo.body }))}
           ></button>
-          <button className="icon icon-destroy" onClick={deleteItem}></button>
+          <button className="icon icon-destroy" type="button" onClick={deleteItem}></button>
         </div>
         <form onSubmit={this.onSubmit}>
           <input
+            ref={input => input && input.focus()}
+            autoFocus={true}
             type="text"
             className="edit"
             onChange={event => this.setState({ label: event.target.value })}

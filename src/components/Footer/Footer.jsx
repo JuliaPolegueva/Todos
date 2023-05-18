@@ -14,7 +14,7 @@ class Footer extends React.Component {
       <footer className="footer">
         <span className="todo-count">{lefts} items left</span>
         <TasksFilter filter={filter} changeFilter={changeFilter} />
-        <button className="clear-completed" onClick={clearCompleted}>
+        <button className="clear-completed" type="button" onClick={clearCompleted}>
           Clear completed
         </button>
       </footer>

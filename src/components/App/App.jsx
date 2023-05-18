@@ -30,10 +30,9 @@ class App extends React.Component {
 
   addItem = (text, min, sec) => {
     const newItem = this.createItem(text, min, sec);
+    const newArr = [...this.state.todoData, newItem];
 
-    this.setState(({ todoData }) => {
-      const newArr = [...todoData, newItem];
-
+    this.setState(() => {
       return {
         todoData: newArr,
       };
@@ -43,10 +42,12 @@ class App extends React.Component {
   //Удаление элементов
 
   deleteItem = id => {
-    this.setState(({ todoData }) => {
-      const idx = todoData.findIndex(el => el.id === id);
-      const newArr = [...todoData.slice(0, idx), ...todoData.slice(idx + 1)];
+    const { todoData } = this.state;
 
+    const idx = todoData.findIndex(el => el.id === id);
+    const newArr = [...todoData.slice(0, idx), ...todoData.slice(idx + 1)];
+
+    this.setState(() => {
       return {
         todoData: newArr,
       };
@@ -56,14 +57,14 @@ class App extends React.Component {
   //Выполнение элементов
 
   checkItem = id => {
-    this.setState(({ todoData }) => {
-      const idx = todoData.findIndex(el => el.id === id);
+    const { todoData } = this.state;
 
-      const oldItem = todoData[idx];
-      const newItem = { ...oldItem, checked: !oldItem.checked };
+    const idx = todoData.findIndex(el => el.id === id);
+    const oldItem = todoData[idx];
+    const newItem = { ...oldItem, checked: !oldItem.checked };
+    const newArr = [...todoData.slice(0, idx), newItem, ...todoData.slice(idx + 1)];
 
-      const newArr = [...todoData.slice(0, idx), newItem, ...todoData.slice(idx + 1)];
-
+    this.setState(() => {
       return {
         todoData: newArr,
       };
@@ -73,14 +74,14 @@ class App extends React.Component {
   //Редактирование элемента
 
   editItem = (id, label) => {
-    this.setState(({ todoData }) => {
-      const idx = todoData.findIndex(el => el.id === id);
+    const { todoData } = this.state;
 
-      const oldItem = todoData[idx];
-      const newItem = { ...oldItem, body: label };
+    const idx = todoData.findIndex(el => el.id === id);
+    const oldItem = todoData[idx];
+    const newItem = { ...oldItem, body: label };
+    const newArr = [...todoData.slice(0, idx), newItem, ...todoData.slice(idx + 1)];
 
-      const newArr = [...todoData.slice(0, idx), newItem, ...todoData.slice(idx + 1)];
-
+    this.setState(() => {
       return {
         todoData: newArr,
       };
@@ -108,9 +109,9 @@ class App extends React.Component {
   //Очистка завершенных задач
 
   clearCompleted = () => {
-    this.setState(({ todoData }) => {
-      const newArr = todoData.filter(el => !el.checked);
+    const newArr = this.state.todoData.filter(el => !el.checked);
 
+    this.setState(() => {
       return {
         todoData: newArr,
       };
@@ -120,38 +121,35 @@ class App extends React.Component {
   static stopTimer;
 
   countdownTime = (id, min, sec) => {
+    const { todoData } = this.state;
     let startTime = Math.floor(min * 60 + sec);
 
     if (startTime <= 0) return;
-    //уменьшаем общее время на одну секунду
+
     startTime--;
 
     const newMin = Math.floor(startTime / 60);
     const newSec = startTime % 60;
 
-    this.setState(({ todoData }) => {
-      const idx = todoData.findIndex(el => el.id === id);
+    const idx = todoData.findIndex(el => el.id === id);
+    const oldItem = todoData[idx];
+    const newItem = { ...oldItem, min: newMin, sec: newSec };
+    const newArr = [...todoData.slice(0, idx), newItem, ...todoData.slice(idx + 1)];
 
-      const oldItem = todoData[idx];
-      const newItem = { ...oldItem, min: newMin, sec: newSec };
-
-      const newArr = [...todoData.slice(0, idx), newItem, ...todoData.slice(idx + 1)];
-
+    this.setState(() => {
       return {
         todoData: newArr,
         timer: true,
       };
     });
 
-    //смотрим время не закончилось
     if (startTime >= 1) {
-      //если нет, то повторяем процедуру заново
       this.stopTimer = setTimeout(() => {
         this.countdownTime(id, newMin, newSec);
       }, 1000);
-      //если закончилось, то выводим сообщение на экран, и делаем кнопку запуска активной
     } else {
       clearTimeout(this.stopTimer);
+
       this.setState(() => {
         return {
           timer: false,
@@ -161,8 +159,8 @@ class App extends React.Component {
   };
 
   stopTime = () => {
-    //очистим переменную с таймером
     clearTimeout(this.stopTimer);
+
     this.setState(() => {
       return {
         timer: false,

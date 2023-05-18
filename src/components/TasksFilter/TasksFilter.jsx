@@ -10,17 +10,25 @@ class TasksFilter extends React.Component {
     return (
       <ul className="filters">
         <li>
-          <button className={filter === 'All' ? 'selected' : null} onClick={() => changeFilter('All')}>
+          <button className={filter === 'All' ? 'selected' : null} type="button" onClick={() => changeFilter('All')}>
             All
           </button>
         </li>
         <li>
-          <button className={filter === 'Active' ? 'selected' : null} onClick={() => changeFilter('Active')}>
+          <button
+            className={filter === 'Active' ? 'selected' : null}
+            type="button"
+            onClick={() => changeFilter('Active')}
+          >
             Active
           </button>
         </li>
         <li>
-          <button className={filter === 'Completed' ? 'selected' : null} onClick={() => changeFilter('Completed')}>
+          <button
+            className={filter === 'Completed' ? 'selected' : null}
+            type="button"
+            onClick={() => changeFilter('Completed')}
+          >
             Completed
           </button>
         </li>

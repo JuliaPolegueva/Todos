@@ -15,6 +15,14 @@ class NewTaskForm extends React.Component {
   onLabelChange = event => {
     const target = event.target;
 
+    if (target.name === 'sec' && target.value > 60) {
+      target.value = 60;
+
+      this.setState({
+        sec: target.value,
+      });
+    }
+
     this.setState({
       [target.name]: target.value,
     });
@@ -53,6 +61,7 @@ class NewTaskForm extends React.Component {
           />
           <input
             className="new-todo-form__timer"
+            type="number"
             placeholder="Min"
             autoFocus
             onChange={this.onLabelChange}
@@ -62,6 +71,8 @@ class NewTaskForm extends React.Component {
           />
           <input
             className="new-todo-form__timer"
+            type="number"
+            max={60}
             placeholder="Sec"
             autoFocus
             onChange={this.onLabelChange}
