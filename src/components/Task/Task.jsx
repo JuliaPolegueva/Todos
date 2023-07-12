@@ -1,72 +1,102 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { formatDistanceToNow } from 'date-fns';
 import PropTypes from 'prop-types';
 
 import './Task.css';
 
-class Task extends React.Component {
-  state = {
-    label: '',
-    editing: false,
-  };
+function Task(props) {
+  const [label, setLabel] = useState('');
+  const [editing, setEditing] = useState(false);
+
+  const [timer, setTimer] = useState(false);
+  const [startTime, setStartTime] = useState(-1);
+
+  const { todo, deleteItem, checkItem, editItem, timerUpdate } = props;
+  const { id, body, min, sec, checked, date } = todo;
 
   //Обработка событий при отправки формы, вызывает ф-цию добавления элемента
 
-  onSubmit = event => {
+  function onSubmit(event) {
     event.preventDefault();
 
-    this.props.editItem(this.props.todo.id, this.state.label);
+    editItem(id, label);
 
-    this.setState({
-      label: '',
-      editing: false,
-    });
-  };
-
-  render() {
-    //Данные с TaskList деструктуризация
-    const { todo, timer, deleteItem, checkItem, countdownTime, stopTime } = this.props;
-    const { id, body, min, sec, checked, date } = todo;
-
-    return (
-      //Классы li в зависимости от состояния
-      <li className={checked ? 'completed' : this.state.editing ? 'editing' : null}>
-        <div className="view">
-          <input className="toggle" type="checkbox" id={id} onChange={checkItem} checked={checked} />
-          <label htmlFor={id}>
-            <span className="title">{body}</span>
-            <span className="description">
-              <button className="icon icon-play" type="button" onClick={timer ? () => {} : countdownTime}></button>
-              <button className="icon icon-pause" type="button" onClick={stopTime}></button>
-              {min}:{sec}
-            </span>
-            <span className="description">
-              {`created ${formatDistanceToNow(date, {
-                includeSeconds: true,
-                addSuffix: true,
-              })}`}
-            </span>
-          </label>
-          <button
-            className="icon icon-edit"
-            type="button"
-            onClick={() => this.setState(({ editing }) => ({ editing: !editing, label: this.props.todo.body }))}
-          ></button>
-          <button className="icon icon-destroy" type="button" onClick={deleteItem}></button>
-        </div>
-        <form onSubmit={this.onSubmit}>
-          <input
-            ref={input => input && input.focus()}
-            autoFocus={true}
-            type="text"
-            className="edit"
-            onChange={event => this.setState({ label: event.target.value })}
-            value={this.state.label}
-          />
-        </form>
-      </li>
-    );
+    setLabel('');
+    setEditing(false);
   }
+
+  function editTask() {
+    setEditing(editing => !editing);
+    setLabel(body);
+  }
+
+  useEffect(() => {
+    const stopTimer = setInterval(() => {
+      if (timer) {
+        setStartTime(startTime => startTime - 1);
+
+        const newMin = Math.floor(startTime / 60);
+        const newSec = startTime % 60;
+
+        countdownTime(id, newMin, newSec);
+      }
+    }, 1000);
+
+    if (startTime < 0) setTimer(false);
+
+    return () => {
+      clearInterval(stopTimer);
+    };
+  }, [startTime, timer]);
+
+  function countdownTime(id, min, sec) {
+    if (startTime === -1) setStartTime(Math.floor(min * 60 + sec));
+
+    setTimer(true);
+    timerUpdate(id, min, sec);
+  }
+
+  function stopTime() {
+    setTimer(false);
+  }
+
+  return (
+    <li className={checked ? 'completed' : editing ? 'editing' : null}>
+      <div className="view">
+        <input className="toggle" type="checkbox" id={id} onChange={checkItem} checked={checked} />
+        <label htmlFor={id}>
+          <span className="title">{body}</span>
+          <span className="description">
+            <button
+              className="icon icon-play"
+              type="button"
+              onClick={timer ? () => {} : () => countdownTime(id, min, sec)}
+            ></button>
+            <button className="icon icon-pause" type="button" onClick={stopTime}></button>
+            {min}:{sec}
+          </span>
+          <span className="description">
+            {`created ${formatDistanceToNow(date, {
+              includeSeconds: true,
+              addSuffix: true,
+            })}`}
+          </span>
+        </label>
+        <button className="icon icon-edit" type="button" onClick={() => editTask()}></button>
+        <button className="icon icon-destroy" type="button" onClick={deleteItem}></button>
+      </div>
+      <form onSubmit={onSubmit}>
+        <input
+          ref={input => input && input.focus()}
+          autoFocus={true}
+          type="text"
+          className="edit"
+          onChange={event => setLabel(event.target.value)}
+          value={label}
+        />
+      </form>
+    </li>
+  );
 }
 
 Task.defaultProps = {
@@ -85,9 +115,7 @@ Task.propTypes = {
   deleteItem: PropTypes.func.isRequired,
   checkItem: PropTypes.func.isRequired,
   editItem: PropTypes.func.isRequired,
-  countdownTime: PropTypes.func.isRequired,
-  stopTime: PropTypes.func.isRequired,
-  timer: PropTypes.bool,
+  timerUpdate: PropTypes.func.isRequired,
 };
 
 export default Task;

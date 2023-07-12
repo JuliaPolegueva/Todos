@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 import NewTaskForm from '../NewTaskForm';
 import TaskList from '../TaskList';
@@ -6,18 +6,15 @@ import Footer from '../Footer';
 
 import './App.css';
 
-class App extends React.Component {
-  state = {
-    todoData: [],
-    filter: 'All',
-    timer: false,
-  };
+function App() {
+  const [todoData, setTodoData] = useState([]);
+  const [filter, setFilter] = useState('All');
 
   //Создание элементов
 
-  createItem(label, min, sec) {
+  function createItem(label, min, sec) {
     return {
-      id: this.state.todoData.length + 1,
+      id: todoData.length + 1,
       body: label,
       min: min,
       sec: sec,
@@ -28,170 +25,95 @@ class App extends React.Component {
 
   //Добавление элементов
 
-  addItem = (text, min, sec) => {
-    const newItem = this.createItem(text, min, sec);
-    const newArr = [...this.state.todoData, newItem];
+  function addItem(text, min, sec) {
+    const newItem = createItem(text, min, sec);
+    const newArr = [...todoData, newItem];
 
-    this.setState(() => {
-      return {
-        todoData: newArr,
-      };
-    });
-  };
+    setTodoData(newArr);
+  }
 
   //Удаление элементов
 
-  deleteItem = id => {
-    const { todoData } = this.state;
-
+  function deleteItem(id) {
     const idx = todoData.findIndex(el => el.id === id);
     const newArr = [...todoData.slice(0, idx), ...todoData.slice(idx + 1)];
 
-    this.setState(() => {
-      return {
-        todoData: newArr,
-      };
-    });
-  };
+    setTodoData(newArr);
+  }
 
   //Выполнение элементов
 
-  checkItem = id => {
-    const { todoData } = this.state;
-
+  function checkItem(id) {
     const idx = todoData.findIndex(el => el.id === id);
     const oldItem = todoData[idx];
     const newItem = { ...oldItem, checked: !oldItem.checked };
     const newArr = [...todoData.slice(0, idx), newItem, ...todoData.slice(idx + 1)];
 
-    this.setState(() => {
-      return {
-        todoData: newArr,
-      };
-    });
-  };
+    setTodoData(newArr);
+  }
 
   //Редактирование элемента
 
-  editItem = (id, label) => {
-    const { todoData } = this.state;
-
+  function editItem(id, label) {
     const idx = todoData.findIndex(el => el.id === id);
     const oldItem = todoData[idx];
     const newItem = { ...oldItem, body: label };
     const newArr = [...todoData.slice(0, idx), newItem, ...todoData.slice(idx + 1)];
 
-    this.setState(() => {
-      return {
-        todoData: newArr,
-      };
-    });
-  };
+    setTodoData(newArr);
+  }
 
   //Фильтрование элементов
 
-  filteredItems = () => {
-    const { todoData, filter } = this.state;
-
+  function filteredItems() {
     return todoData.filter(({ checked }) => {
       return filter === 'All' ? true : filter === 'Completed' ? checked === true : checked === false;
     });
-  };
+  }
 
   //Изменение state фильтра
 
-  changeFilter = newFilter => {
-    this.setState({
-      filter: newFilter,
-    });
-  };
+  function changeFilter(newFilter) {
+    setFilter(newFilter);
+  }
 
   //Очистка завершенных задач
 
-  clearCompleted = () => {
-    const newArr = this.state.todoData.filter(el => !el.checked);
+  function clearCompleted() {
+    const newArr = todoData.filter(el => !el.checked);
 
-    this.setState(() => {
-      return {
-        todoData: newArr,
-      };
-    });
-  };
+    setTodoData(newArr);
+  }
 
-  static stopTimer;
-
-  countdownTime = (id, min, sec) => {
-    const { todoData } = this.state;
-    let startTime = Math.floor(min * 60 + sec);
-
-    if (startTime <= 0) return;
-
-    startTime--;
-
-    const newMin = Math.floor(startTime / 60);
-    const newSec = startTime % 60;
-
+  function timerUpdate(id, min, sec) {
     const idx = todoData.findIndex(el => el.id === id);
     const oldItem = todoData[idx];
-    const newItem = { ...oldItem, min: newMin, sec: newSec };
+    const newItem = { ...oldItem, min: min, sec: sec };
     const newArr = [...todoData.slice(0, idx), newItem, ...todoData.slice(idx + 1)];
 
-    this.setState(() => {
-      return {
-        todoData: newArr,
-        timer: true,
-      };
-    });
-
-    if (startTime >= 1) {
-      this.stopTimer = setTimeout(() => {
-        this.countdownTime(id, newMin, newSec);
-      }, 1000);
-    } else {
-      clearTimeout(this.stopTimer);
-
-      this.setState(() => {
-        return {
-          timer: false,
-        };
-      });
-    }
-  };
-
-  stopTime = () => {
-    clearTimeout(this.stopTimer);
-
-    this.setState(() => {
-      return {
-        timer: false,
-      };
-    });
-  };
-
-  render() {
-    return (
-      <section className="todoapp">
-        <NewTaskForm addItem={this.addItem} />
-        <section className="main">
-          <TaskList
-            todos={this.filteredItems()}
-            deleteItem={this.deleteItem}
-            checkItem={this.checkItem}
-            editItem={this.editItem}
-            countdownTime={this.countdownTime}
-            stopTime={this.stopTime}
-            timer={this.state.timer}
-          />
-          <Footer
-            lefts={this.state.todoData.filter(item => !item.checked).length}
-            changeFilter={this.changeFilter}
-            clearCompleted={this.clearCompleted}
-            filter={this.state.filter}
-          />
-        </section>
-      </section>
-    );
+    setTodoData(newArr);
   }
+
+  return (
+    <section className="todoapp">
+      <NewTaskForm addItem={addItem} />
+      <section className="main">
+        <TaskList
+          todos={filteredItems()}
+          deleteItem={deleteItem}
+          checkItem={checkItem}
+          editItem={editItem}
+          timerUpdate={timerUpdate}
+        />
+        <Footer
+          lefts={todoData.filter(item => !item.checked).length}
+          changeFilter={changeFilter}
+          clearCompleted={clearCompleted}
+          filter={filter}
+        />
+      </section>
+    </section>
+  );
 }
 
 export default App;

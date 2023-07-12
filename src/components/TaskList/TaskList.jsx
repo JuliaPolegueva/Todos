@@ -5,31 +5,27 @@ import Task from '../Task';
 
 import './TaskList.css';
 
-class TaskList extends React.Component {
-  render() {
-    const { todos, timer, deleteItem, checkItem, editItem, countdownTime, stopTime } = this.props;
+function TaskList(props) {
+  const { todos, deleteItem, checkItem, editItem, timerUpdate } = props;
 
-    return (
-      <ul className="todo-list">
-        {todos.map(item => {
-          const { id, min, sec } = item;
+  return (
+    <ul className="todo-list">
+      {todos.map(item => {
+        const { id } = item;
 
-          return (
-            <Task
-              key={id}
-              todo={item}
-              timer={timer}
-              deleteItem={() => deleteItem(id)}
-              checkItem={() => checkItem(id)}
-              editItem={editItem}
-              countdownTime={() => countdownTime(id, min, sec)}
-              stopTime={() => stopTime()}
-            />
-          );
-        })}
-      </ul>
-    );
-  }
+        return (
+          <Task
+            key={id}
+            todo={item}
+            timerUpdate={timerUpdate}
+            deleteItem={() => deleteItem(id)}
+            checkItem={() => checkItem(id)}
+            editItem={editItem}
+          />
+        );
+      })}
+    </ul>
+  );
 }
 
 TaskList.defaultProps = {
@@ -37,13 +33,11 @@ TaskList.defaultProps = {
 };
 
 TaskList.propTypes = {
-  timer: PropTypes.bool,
   todos: PropTypes.any,
   checkItem: PropTypes.func.isRequired,
   deleteItem: PropTypes.func.isRequired,
   editItem: PropTypes.func.isRequired,
-  countdownTime: PropTypes.func.isRequired,
-  stopTime: PropTypes.func.isRequired,
+  timerUpdate: PropTypes.func.isRequired,
 };
 
 export default TaskList;
